@@ -1,0 +1,44 @@
+data Choice a = Both ( a, a ) | Single a
+type Choices a = [Choice a]
+
+[ String ] -> [ Option ]
+Option -> Option -> Option
+(Option -> Option -> Option) -> [ Option ] -> [ Option ]
+
+String -> Choice String
+Choice (String, String) -> ((String, String) -> Choice String) -> Choice String
+
+a -> Choice b
+
+reduce :: (a -> a -> a) -> [ a ] -> [ a ]
+reduce _ [] = []
+reduce _ [x] = [x]
+reduce f x = f head 2 x
+
+left :: a -> a -> Choice a
+left x _ = Choice x
+
+right :: a -> a -> Choice 
+right _ y = Choice y
+
+join :: a -> a -> a
+join x y = Both (x, y)
+
+liftChoice :: [a] -> [ Choice a ]
+liftChoice = map Single
+
+main :: IO ()
+
+getOptions :: IO String
+
+parseOptions :: String -> [ String ]
+
+generateChoices :: [ String ] -> [ Choice ]
+
+present :: [ Choice ] -> [ IO ( Choice -> Choice ) ]
+
+choose :: [ IO ( Choice -> Choice ) ] -> IO [ Choice ]
+
+...
+
+printResult :: String -> IO String
