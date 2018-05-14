@@ -1,6 +1,10 @@
 import Data.Maybe
 import qualified Control.Applicative as Ap
 import Control.Monad (join)
+import Control.Arrow
+import System.IO
+
+-- ================= --
 
 readOptions :: IO String
 readOptions = getLine
@@ -19,7 +23,7 @@ makeAlternatives [x] = [ One x ]
 makeAlternatives (x:y:xs) = [Two (x, y) ] ++ ( makeAlternatives xs )
 
 showChoices :: Alternative -> Maybe ( IO () )
-showChoices (Two (x,y)) = Just ( putStrLn ( x ++ " or " ++ y ++ "?" ) )
+showChoices (Two (x,y)) = Just ( putStrLn ( x ++ " or " ++ y ++ "?" ) >> hFlush stdout )
 showChoices _ = Nothing
 
 -- Two state data type
@@ -36,7 +40,7 @@ readChoice =
         (return . parseChoice) >>=
         (\x -> case x of
             Just x -> return x
-            Nothing -> putStrLn "Wrong input" >> readChoice
+            Nothing -> putStrLn "Wrong input" >> hFlush stdout >> readChoice
         )
 
 leftReduce :: Alternative -> Option
@@ -54,6 +58,20 @@ getChoice False = rightReduce
 combine :: [ (Alternative -> Option) ] -> [ Alternative ] -> [ Option ]
 combine f x = Ap.getZipList ( (Ap.ZipList (f ++ (cycle [leftReduce]))) <*> (Ap.ZipList x)) 
 
-main :: IO ()
-main = readOptions >>= ( (foldr (>>) (return ())) . (fmap (>> (readChoice >>= (return . getChoice)))) . catMaybes . (fmap showChoices) . {- split here  -} makeAlternatives . parseOptions )
+-- ================= --
 
+getAlternatives :: String -> [ Alternative ]
+getAlternatives = makeAlternatives . parseOptions
+
+readChoices :: [ Alternative ] -> IO [ (Alternative -> Option) ]
+readChoices = sequence . (fmap (>> (readChoice >>= (return . getChoice)))) . catMaybes . (fmap showChoices)
+
+reduceOptions :: [Option] -> IO Option
+reduceOptions [] = return ""
+reduceOptions [x] = return x
+reduceOptions xs = reduceOptions =<< ((\(x, y) -> x >>= (return . (flip combine) y)) <<< ((readChoices) &&& id) <<< makeAlternatives) xs
+
+-- ================= --
+
+main :: IO ()
+main = readOptions >>= ( reduceOptions . parseOptions ) >>= putStrLn
