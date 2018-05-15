@@ -5,6 +5,4 @@ type Choice = Bool
 type Entry = String
 
 class Bracket a where
-    leftReduce  :: a -> a
-    rightReduce :: a -> a
-    join :: a -> a -> [a]
+    reduce :: (String -> IO Choice) -> a -> IO a
