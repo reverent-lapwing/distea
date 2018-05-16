@@ -4,7 +4,7 @@ import System.IO
 
 -- ================= --
 
-import Tournament.Naive
+import Tournament.Naive as Naive
 import Core.Parser
 import Core.Data
 
@@ -22,8 +22,12 @@ readChoice s =
             Just x -> return x
             Nothing -> putStrLn "Wrong input" >> hFlush stdout >> readChoice s
         )
+        
+readMethod :: IO ( [ Entry ] -> IO Entry )
+readMethod = putStrLn "Choose destilation method" >> hFlush stdout >> getLine >> return (Naive.chooseEntry readChoice)
 
 -- ================= --
 
 main :: IO ()
-main = readEntries >>= (chooseEntry readChoice) >>= putStrLn
+main =
+    readMethod >>= ( readEntries >>= ) >>= putStrLn
