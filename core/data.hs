@@ -1,8 +1,7 @@
 module Core.Data where
 
--- Two state data type
-type Choice = Bool
-type Entry = String
+import Data.Monoid
 
-class Bracket a where
-    reduce :: (String -> IO Choice) -> a -> IO a
+-- Two state data type
+type Choice = All
+type Entry = String

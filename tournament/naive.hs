@@ -1,7 +1,10 @@
 module Tournament.Naive(chooseEntry) where
 
 import Core.Data
+import Core.Bracket
 import Core.Parser
+
+import Data.Monoid
 
 import qualified Control.Applicative as Ap
 
@@ -19,9 +22,9 @@ chooseEntry f x = (reduceEntries f) $ makeAlternatives x
 
 
 getChoice :: Choice -> Alternative -> Alternative
-getChoice True = leftReduce
-getChoice False = rightReduce
-        
+getChoice (All True) = leftReduce
+getChoice (All False) = rightReduce
+
 leftReduce :: Alternative -> Alternative
 leftReduce (One x) = One x
 leftReduce (Two (x, _)) = One x

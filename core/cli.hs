@@ -1,10 +1,10 @@
 import Data.Maybe
-import Control.Monad (join)
 import System.IO
 
 -- ================= --
 
 import Tournament.Naive as Naive
+import Tournament.Score as Score
 import Core.Parser
 import Core.Data
 
