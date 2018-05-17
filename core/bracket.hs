@@ -2,9 +2,9 @@ module Core.Bracket where
 
 import Core.Data
 
-class Bracket a where
-    reduce :: a -> Choice -> a
-    getChoices :: a -> [ Entry ]
+class Functor a => Bracket a where
+    reduce :: a b -> Choice -> a b
+    getChoices :: a b -> [ b ]
     
 {-
     reduceEntries :: (String -> IO Choice) -> [ a ] -> IO Entry
