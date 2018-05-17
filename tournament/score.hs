@@ -63,11 +63,17 @@ applyChoice (c, e) = Alt (c, [e])
 processChoices :: [ (Choice, Entry) ] -> Alt Choice [ Entry ]
 processChoices xs = mconcat $ ( fmap applyChoice xs )
 
---reduce :: Monoid a => Choice -> a -> Alt Choice a
---reduce = 
+reduce :: Functor t => Choice -> t a -> Alt Choice (t a)
+reduce c x = Alt (c, x)
 
-liftAlt :: Monoid a => [a] -> Alt Choice [a]
+liftAlt :: [a] -> Alt Choice [a]
 liftAlt = pure
+
+{-
+
+readChoice >>= ( alts >>= reduce )
+
+-}
 
 {-    
 instance Bracket Alt a b where
