@@ -27,24 +27,18 @@ instance Monoid a => Applicative (Alt a) where
     pure x = Alt (mempty, x)
     (<*>) (Alt (_, f)) x = fmap f x
 
-{-
-instance Semigroup Alt where
+
+instance (Ord a, Monoid a, Monoid b) => Semigroup (Alt a b) where
     (<>) x y = 
         case c of 
             GT -> x
             LT -> y
             EQ -> mappend <$> x <*> y
         where c = compare x y
--}
+
 
 instance (Ord a, Monoid a, Monoid b) => Monoid (Alt a b) where
     mempty = Alt (mempty, mempty)
-    mappend x y = 
-        case c of 
-            GT -> x
-            LT -> y
-            EQ -> mappend <$> x <*> y
-        where c = compare x y
     mconcat [] = mempty
     mconcat x = head (sort x)
 

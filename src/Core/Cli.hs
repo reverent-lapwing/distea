@@ -1,3 +1,5 @@
+module Core.Cli(mainCLI) where
+
 import Data.Maybe
 import Data.Monoid
 import System.IO
@@ -12,7 +14,7 @@ import Core.Data
 -- ================= --
 
 readMethod :: IO ( [ Entry ] -> IO Entry )
-readMethod = putStrLn "Choose destilation method" >> hFlush stdout >> getLine >> return (Naive.chooseEntry readChoice)
+readMethod = putStrLn "Choose destilation method" >> hFlush stdout >> getLine >> return (Naive.chooseEntryIO readChoice)
 
 readEntries :: IO [ Entry ]
 readEntries = putStrLn "Input options" >> hFlush stdout >> getLine >>= return . splitEntries
@@ -38,5 +40,3 @@ mainCLI :: IO ()
 mainCLI = 
     readMethod >>= ( readEntries >>= ) >>= putStrLn
 
-main :: IO ()
-main = mainCLI
