@@ -1,7 +1,7 @@
 module Tournament.Score() where
 
 import Core.Data
-import Core.Bracket
+import Bracket.Bracket
 import Core.Parser
 
 import Data.Monoid hiding (Alt)

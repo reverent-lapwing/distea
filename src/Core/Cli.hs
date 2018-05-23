@@ -6,7 +6,7 @@ import System.IO
 
 -- ================= --
 
-import Tournament.Naive as Naive
+import Tournament.Elimination as Elimination
 import Tournament.Score as Score
 import Core.Parser
 import Core.Data
@@ -14,7 +14,7 @@ import Core.Data
 -- ================= --
 
 readMethod :: IO ( [ Entry ] -> IO Entry )
-readMethod = putStrLn "Choose destilation method" >> hFlush stdout >> getLine >> return (Naive.chooseEntryIO readChoice)
+readMethod = putStrLn "Choose destilation method" >> hFlush stdout >> getLine >> return (Elimination.chooseEntryIO readChoice)
 
 readEntries :: IO [ Entry ]
 readEntries = putStrLn "Input options" >> hFlush stdout >> getLine >>= return . splitEntries

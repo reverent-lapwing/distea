@@ -18,11 +18,11 @@ cabal-version:       >=1.10
 executable distiea
   main-is:             Main.hs
   other-modules:       Core.Cli
-                       Core.Bracket
                        Core.Data
                        Core.Parser
-                       Tournament.Naive
-                       Tournament.Score
+                       Bracket.Bracket
+                       Bracket.Elimination
+                       Bracket.Score
   -- other-extensions:    
   hs-source-dirs:      src/ 
   build-depends:       base >=4.11 && <4.12
