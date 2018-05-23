@@ -1,10 +1,17 @@
 module Core.Bracket where
 
+import Data.Foldable
+
 import Core.Data
 
-class Functor a => Bracket a where
+class (Foldable a, Applicative a) => Bracket a where
     reduce :: a b -> Choice -> a b
+    
     getChoices :: a b -> [ b ]
+    getChoices = take 2 . toList
+ 
+    makeBracket :: ( Monoid (a b)) => [ b ] -> a b
+    makeBracket = mconcat . (fmap pure)
     
 {-
     reduceEntries :: (String -> IO Choice) -> [ a ] -> IO Entry

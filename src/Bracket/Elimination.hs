@@ -9,14 +9,10 @@ import Control.Monad (ap)
 data Alternative a = Two a a (Alternative a) | One a | Null
 
 instance Bracket Alternative where
-    reduce (Two x y xs) (All True)  = mappend xs (One x)
-    reduce (Two x y xs) (All False) = mappend xs (One y)
+    reduce (Two x y xs) (All True)  = xs <> (One x)
+    reduce (Two x y xs) (All False) = xs <> (One y)
     reduce (One x)       _          = One x
-    reduce _             _          = Null
-    
-    getChoices (Two x y _) = [x,y]
-    getChoices (One x)     = [x]
-    getChoices _           = []
+    reduce Null          _          = Null
 
 instance Semigroup (Alternative a) where
     (<>) x            Null         = x
@@ -29,9 +25,14 @@ instance Monoid (Alternative a) where
     mempty = Null
 
 instance Functor Alternative where
-    fmap _  Null        = Null
+    fmap _ Null         = Null
     fmap f (One x)      = (One (f x))
     fmap f (Two x y xs) = (Two (f x) (f y) (fmap f xs))
+
+instance Foldable Alternative where
+    foldMap f Null         = mempty
+    foldMap f (One x)      = f x
+    foldMap f (Two x y xs) = f x <> f y <> (foldMap f xs)
 
 instance Applicative Alternative where
     pure x = One x
@@ -40,27 +41,14 @@ instance Applicative Alternative where
 instance Monad Alternative where
     (>>=) Null         _  = Null
     (>>=) (One x)      f = f x
-    (>>=) (Two x y xs) f = f x `mappend` f y `mappend` (xs >>= f)
+    (>>=) (Two x y xs) f = f x <> f y <> (xs >>= f)
 
 chooseEntryIO :: Monoid a => ([ a ] -> IO Choice) -> [ a ] -> IO a
-chooseEntryIO f x = (reduceEntriesIO f) $ makeAlternatives x
+chooseEntryIO f x = (reduceEntriesIO f) $ makeBracket x
 
 
-
-altMap :: (Alternative a -> Alternative b) -> Alternative a -> Alternative b
-altMap _ Null         = Null
-altMap f (One x)      = (f (One x))
-altMap f (Two x y xs) = (f (Two x y Null)) `mappend` (altMap f xs)
-
-reduceEntries :: Monoid a => Choice -> Alternative a -> Alternative a
-reduceEntries = flip reduce
-
-reduceEntriesIO :: Monoid a => ([ a ] -> IO Choice) -> Alternative a -> IO a
+reduceEntriesIO :: (Monoid a) => ([ a ] -> IO Choice) -> Alternative a -> IO a
 reduceEntriesIO _ Null    = return mempty
 reduceEntriesIO _ (One x) = return x
-reduceEntriesIO f x       = f (getChoices x) >>= return . (reduce x) >>= reduceEntriesIO f
+reduceEntriesIO f x       = f (getChoices x) >>= (reduceEntriesIO f) . (reduce x)
 
-makeAlternatives :: [ a ] -> Alternative a
-makeAlternatives [] = Null
-makeAlternatives [x] = One x
-makeAlternatives (x:y:xs) = Two x y (makeAlternatives xs)
