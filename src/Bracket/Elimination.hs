@@ -10,15 +10,14 @@ import Control.Monad (ap)
 type Elimination a = [a]
 
 instance Bracket [] where
-    reduce x (All True)  = (((take 1) . id      . (take 2)) l) <> (drop 2 l) where l = toList x
-    reduce x (All False) = (((take 1) . reverse . (take 2)) l) <> (drop 2 l) where l = toList x
+    reduce x (All True)  = (drop 2 l) <> (((take 1) . id      . (take 2)) l) where l = toList x
+    reduce x (All False) = (drop 2 l) <> (((take 1) . reverse . (take 2)) l) where l = toList x
+
+makeElimination :: [ a ] -> Elimination a
+makeElimination = makeBracket
 
 chooseEntryIO :: Monoid a => ([ a ] -> IO Choice) -> [ a ] -> IO a
-chooseEntryIO f x = (reduceEntriesIO f) $ makeBracket x
-
-
-reduceEntriesIO :: (Monoid a) => ([ a ] -> IO Choice) -> Elimination a -> IO a
-reduceEntriesIO _ []  = return mempty
-reduceEntriesIO _ [x] = return x
-reduceEntriesIO f x   = f (getChoices x) >>= (reduceEntriesIO f) . (reduce x)
-
+-- Canonic version
+--chooseEntryIO f x = (reduceEntriesIO f) $ makeElimination x
+-- Simplified version
+chooseEntryIO = reduceEntriesIO
