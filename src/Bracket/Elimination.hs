@@ -9,8 +9,6 @@ import Control.Monad (ap)
 
 type Elimination a = [a]
 
-data Alternative a = Two a a (Alternative a) | One a | Null
-
 instance Bracket [] where
     reduce x (All True)  = (((take 1) . id      . (take 2)) l) <> (drop 2 l) where l = toList x
     reduce x (All False) = (((take 1) . reverse . (take 2)) l) <> (drop 2 l) where l = toList x
