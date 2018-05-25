@@ -4,51 +4,23 @@ import Core.Data
 import Bracket.Bracket
 
 import Data.Monoid
+import Data.Foldable
 import Control.Monad (ap)
+
+type Elimination a = [a]
 
 data Alternative a = Two a a (Alternative a) | One a | Null
 
-instance Bracket Alternative where
-    reduce (Two x y xs) (All True)  = xs <> (One x)
-    reduce (Two x y xs) (All False) = xs <> (One y)
-    reduce (One x)       _          = One x
-    reduce Null          _          = Null
-
-instance Semigroup (Alternative a) where
-    (<>) x            Null         = x
-    (<>) Null         x            = x
-    (<>) (One x)      (One y)      = Two x y Null
-    (<>) (One x)      (Two y z xs) = Two x y (One z <> xs)
-    (<>) (Two x y xs) x'           = Two x y (xs <> x')
-
-instance Monoid (Alternative a) where
-    mempty = Null
-
-instance Functor Alternative where
-    fmap _ Null         = Null
-    fmap f (One x)      = (One (f x))
-    fmap f (Two x y xs) = (Two (f x) (f y) (fmap f xs))
-
-instance Foldable Alternative where
-    foldMap f Null         = mempty
-    foldMap f (One x)      = f x
-    foldMap f (Two x y xs) = f x <> f y <> (foldMap f xs)
-
-instance Applicative Alternative where
-    pure x = One x
-    (<*>) = ap
-     
-instance Monad Alternative where
-    (>>=) Null         _  = Null
-    (>>=) (One x)      f = f x
-    (>>=) (Two x y xs) f = f x <> f y <> (xs >>= f)
+instance Bracket [] where
+    reduce x (All True)  = (((take 1) . id      . (take 2)) l) <> (drop 2 l) where l = toList x
+    reduce x (All False) = (((take 1) . reverse . (take 2)) l) <> (drop 2 l) where l = toList x
 
 chooseEntryIO :: Monoid a => ([ a ] -> IO Choice) -> [ a ] -> IO a
 chooseEntryIO f x = (reduceEntriesIO f) $ makeBracket x
 
 
-reduceEntriesIO :: (Monoid a) => ([ a ] -> IO Choice) -> Alternative a -> IO a
-reduceEntriesIO _ Null    = return mempty
-reduceEntriesIO _ (One x) = return x
-reduceEntriesIO f x       = f (getChoices x) >>= (reduceEntriesIO f) . (reduce x)
+reduceEntriesIO :: (Monoid a) => ([ a ] -> IO Choice) -> Elimination a -> IO a
+reduceEntriesIO _ []  = return mempty
+reduceEntriesIO _ [x] = return x
+reduceEntriesIO f x   = f (getChoices x) >>= (reduceEntriesIO f) . (reduce x)
 
