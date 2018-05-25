@@ -1,5 +1,7 @@
 module Bracket.Score() where
 
+{- NOT IMPLEMENTED
+
 import Core.Data
 import Bracket.Bracket
 import Core.Parser
@@ -123,3 +125,5 @@ makeAlternatives [] = []
 makeAlternatives [x] = [ One x ]
 makeAlternatives (x:y:xs) = [Two (x, y) ] ++ ( makeAlternatives xs )
 -}
+-}
+

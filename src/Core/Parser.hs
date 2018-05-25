@@ -14,6 +14,6 @@ showChoices (x:y:xs) = Just ( x ++ " or " ++ y ++ "?" )
 showChoices _ = Nothing
 
 parseChoice :: String -> Maybe Choice
-parseChoice "l" = Just (All True)
-parseChoice "r" = Just (All False)
+parseChoice "l" = Just True
+parseChoice "r" = Just False
 parseChoice _ = Nothing

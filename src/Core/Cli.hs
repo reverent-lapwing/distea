@@ -23,7 +23,7 @@ readChoice :: [ Entry ] -> IO Choice
 readChoice xs =
         (\x -> case x of
             Just x -> x
-            Nothing -> return (All True)
+            Nothing -> return True
         )
         $ showChoices xs >>= (\s -> Just $
             putStrLn s >> hFlush stdout >>
