@@ -1,4 +1,4 @@
-module Tournament.Score() where
+module Bracket.Score() where
 
 import Core.Data
 import Bracket.Bracket
