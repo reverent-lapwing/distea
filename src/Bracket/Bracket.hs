@@ -1,4 +1,4 @@
-module Core.Bracket where
+module Bracket.Bracket where
 
 import Data.Foldable
 
@@ -9,6 +9,8 @@ class (Foldable a, Applicative a) => Bracket a where
     
     getChoices :: a b -> [ b ]
     getChoices = take 2 . toList
+
+    --getOptions = [ Choice -> b ]
  
     makeBracket :: ( Monoid (a b)) => [ b ] -> a b
     makeBracket = mconcat . (fmap pure)

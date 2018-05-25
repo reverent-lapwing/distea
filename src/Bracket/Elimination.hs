@@ -1,7 +1,7 @@
-module Tournament.Naive(chooseEntryIO) where
+module Bracket.Elimination(chooseEntryIO) where
 
 import Core.Data
-import Core.Bracket
+import Bracket.Bracket
 
 import Data.Monoid
 import Control.Monad (ap)

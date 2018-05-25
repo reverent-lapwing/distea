@@ -6,8 +6,8 @@ import System.IO
 
 -- ================= --
 
-import Tournament.Elimination as Elimination
-import Tournament.Score as Score
+import Bracket.Elimination as Elimination
+import Bracket.Score as Score
 import Core.Parser
 import Core.Data
 
