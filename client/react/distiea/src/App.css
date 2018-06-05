@@ -26,3 +26,18 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+@keyframes Turn-Red {
+  from { color: white; }
+  to { color: red; }
+}
+
+div {
+  margin : auto;
+}
+
+h1:hover {
+  transform : scale(1.1);
+  transform : color(red);
+  transition : 0.5s;
+}
