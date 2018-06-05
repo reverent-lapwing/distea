@@ -2,3 +2,4 @@
 *.swo
 
 dist/
+.stack-work
