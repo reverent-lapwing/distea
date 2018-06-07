@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Distiea from './App'
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const NAMES = [
+  "a", "b", "c", "d", "e", "f", "g", "h"  
+]
+
+ReactDOM.render(<Distiea names={NAMES}/>, document.getElementById('root'));
 registerServiceWorker();
