@@ -1,43 +1,79 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+class Item extends Component {
+  
+  handleChange = (event) => {
+    this.props.onChange(event.target.value)
+  }
 
-
-function Item(props) {
-  return <li>{props.value}</li>
-} 
+  render() {
+    return (
+      <li>
+        <input type="text" value={this.props.name} onChange={this.handleChange}/>
+      </li>
+    )
+  }
+}
 
 function List(props) {
   const names = props.names;
-  const items = names.map((name) =>
-    <Item value={name}/>
+  const items = names.map((name, i) =>
+    <Item name={name} onChange={name => props.onChange(i, name)}/>
   );
   
   return (
     <div className="ChoiceList">
-      {items}
+      <ul>{items}</ul>
     </div>
   );
 }
 
-function Input(props) {
-  return <input/>
+class NewEntry extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      value : "",
+      
+    }
+
+    this.onSubmit = props.onSubmit
+    
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+  }
+  
+  handleChange(event) {
+    this.setState({
+      value : event.target.value
+    })
+  }
+
+  handleSubmit(event) {
+    event.preventDefault()
+    this.onSubmit(this.state.value)
+    this.setState({value : ""})
+  }
+
+  render () {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <input type="text" value={this.state.value} onChange={this.handleChange}/>
+      </form>
+    )
+  }
 }
 
-class Entries extends Component  {
+function Entries(props)  {
+  const names = props.names;
 
-  
-  render() {
-    const names = this.props.names;
-  
-    return (
-      <div className="Entries">
-        <Input/>
-        <List names={names}/>
-      </div>
-    );
-  }
+  return (
+    <div className="Entries">
+      <NewEntry onSubmit={props.onSubmit}/>
+      <List names={names} onChange={props.onChange}/>
+      <button onClick={props.onStart}>Start</button>
+    </div>
+  );
 }
 
 function Choice(props) {
@@ -49,8 +85,20 @@ function Choice(props) {
 }
 
 function Choices(props) {
-  const left = props.names[0]
-  const right = props.names[1]
+  const names = props.names
+
+  if(names.length < 1)
+    return <div/>
+  
+  if(names.length < 2)
+    return (
+      <div className="Choices">
+        <Choice name={names[0]}/>
+      </div>
+    )
+  
+  const left = names[0]
+  const right = names[1]
 
   return (
     <div className="Choices">
@@ -65,30 +113,60 @@ class Dashboard extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      names : []
+      names : [],
+      started : false
     };
 
-    this.state.names = props.names
+    this.addEntry = this.addEntry.bind(this)
+    this.editEntry = this.editEntry.bind(this)
+    this.start = this.start.bind(this)
+    this.pop = this.pop.bind(this)
   }
 
   render() {
-    const names = this.state.names
+    const names = this.state.names.slice()
+
+    const content = !this.state.started ? (
+      <Entries names={names} onSubmit={this.addEntry} onChange={this.editEntry} onStart={this.start}/>
+    ) : (
+      <Choices names={names} onClick={this.pop}/>
+    )
 
     return (
       <div className="Dashboard">
-        <Entries names={names}/>
-        <Choices names={names} onClick={i => this.pop(i)}/>
+        {content}      
       </div>
     )
+  }
+
+  editEntry (i, name) {
+    var names = this.state.names.slice()
+    names.splice(i, 1, name)
+
+    this.setState({
+      names : names
+    }) 
+  }
+
+  addEntry (name) {
+    const names = this.state.names
+    
+    this.setState({
+      names : names.concat([name]) 
+    })
+  }
+  
+  start () {
+    this.setState({started : true})
   }
 
   pop(i) {
     const names = this.state.names
     const first = names[0]
     const second = names[1]
-    const tail = names.slice(1, this.state.names.length-2);
+    const tail = names.slice(2, this.state.names.length);
 
-    const newNames = i === 0 ? tail.concat([first]) : tail.concat([second])
+    const newNames = (i === 0) ? tail.concat([first]) : tail.concat([second])
 
     this.setState({
       names: newNames
@@ -103,7 +181,7 @@ class Distiea extends Component {
         <header className="App-header">
             <h1 className="App-title">Distiea</h1>
         </header>
-        <Dashboard names={this.props.names}/>
+        <Dashboard />
       </div>
     );
   }
