@@ -17,7 +17,4 @@ makeElimination :: [ a ] -> Elimination a
 makeElimination = makeBracket
 
 chooseEntryIO :: Monoid a => ([ a ] -> IO Choice) -> [ a ] -> IO a
--- Canonic version
---chooseEntryIO f x = (reduceEntriesIO f) $ makeElimination x
--- Simplified version
 chooseEntryIO = reduceEntriesIO
