@@ -23,7 +23,11 @@ executable distiea
                        Bracket.Bracket
                        Bracket.Elimination
                        Bracket.Score
+                       Server.Server
   -- other-extensions:    
   hs-source-dirs:      src/ 
-  build-depends:       base >=4.11 && <4.12
+  build-depends:       base >=4.11 && <4.12,
+                       yesod,
+                       yesod-static,
+                       text
   default-language:    Haskell2010

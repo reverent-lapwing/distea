@@ -7,7 +7,6 @@ import System.IO
 -- ================= --
 
 import Bracket.Elimination as Elimination
-import Bracket.Score as Score
 import Core.Parser
 import Core.Data
 
