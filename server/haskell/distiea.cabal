@@ -29,5 +29,12 @@ executable distiea
   build-depends:       base >=4.11 && <4.12,
                        yesod,
                        yesod-static,
-                       text
+                       persistent,
+                       persistent-sqlite,
+                       persistent-template,
+                       text,
+                       monad-logger,
+                       resourcet,
+                       aeson,
+                       bytestring
   default-language:    Haskell2010
